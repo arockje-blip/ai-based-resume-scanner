@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Recruitment Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .portal {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 24px;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #d0d0d0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tag.employer {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+
+        .tag.jobseeker {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .card h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .features li {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .go {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .go.employer {
+            background: #4caf50;
+        }
+
+        .go.employer:hover {
+            background: #45a049;
+        }
+
+        .go.jobseeker {
+            background: #2196f3;
+        }
+
+        .go.jobseeker:hover {
+            background: #0b7dda;
+        }
+
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .portal {
+                padding: 24px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <section class="portal">
+            <header class="title">
+                <h1>AI Hiring Portal</h1>
+            </header>
+            <p class="subtitle">Select your role to get started</p>
+
+            <div class="cards">
+                <article class="card">
+                    <span class="tag employer">Employer</span>
+                    <h2>Company Hiring Desk</h2>
+                    <p>Screen multiple resumes at once and rank candidates by job relevance using AI.</p>
+                    <ul class="features">
+                        <li>Bulk resume analysis</li>
+                        <li>ATS matching</li>
+                        <li>CSV export</li>
+                    </ul>
+                    <a href="employer_prototype.html" class="go employer">Enter</a>
+                </article>
+
+                <article class="card">
+                    <span class="tag jobseeker">Job Seeker</span>
+                    <h2>Career Boost Desk</h2>
+                    <p>Analyze your resume against a job description and get actionable feedback.</p>
+                    <ul class="features">
+                        <li>ATS scoring</li>
+                        <li>Improvement tips</li>
+                        <li>Instant feedback</li>
+                    </ul>
+                    <a href="job_seeker_prototype.html" class="go jobseeker">Enter</a>
+                </article>
+            </div>
+
+            <p class="footer">Choose your role to continue.</p>
+        </section>
+    </main>
+</body>
+</html>

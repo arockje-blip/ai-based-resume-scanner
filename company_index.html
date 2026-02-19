@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Bulk Resume Scanner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.28), transparent 40%),
+                radial-gradient(circle at 85% 20%, rgba(99, 102, 241, 0.30), transparent 42%),
+                radial-gradient(circle at 50% 95%, rgba(45, 212, 191, 0.20), transparent 35%),
+                linear-gradient(135deg, #0b1220 0%, #111827 100%);
+            min-height: 100vh;
+            padding: 30px 24px;
+            color: #0f172a;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(transparent 0%, rgba(255, 255, 255, 0.02) 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(2, 6, 23, 0.42);
+            backdrop-filter: blur(8px);
+        }
+
+        .header {
+            background:
+                linear-gradient(130deg, rgba(37, 99, 235, 0.95) 0%, rgba(79, 70, 229, 0.95) 55%, rgba(14, 165, 233, 0.95) 100%);
+            color: #ffffff;
+            padding: 34px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            top: -160px;
+            right: -80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.96;
+            max-width: 720px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .meta-pill {
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            border: 1px solid #dbe7ff;
+            border-radius: 14px;
+            padding: 18px;
+            background: linear-gradient(180deg, #f8fbff 0%, #f3f8ff 100%);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .panel label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e293b;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+
+        input[type="file"], textarea {
+            width: 100%;
+            border: 1px solid #c7d2fe;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 13px;
+            font-family: inherit;
+            background: #ffffff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input[type="file"]:hover,
+        textarea:hover {
+            border-color: #818cf8;
+        }
+
+        input[type="file"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.13);
+        }
+
+        textarea {
+            min-height: 190px;
+            resize: vertical;
+        }
+
+        .hint {
+            margin-top: 9px;
+            font-size: 12px;
+            color: #475569;
+            line-height: 1.45;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+            color: #ffffff;
+            flex: 2;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #0f172a;
+            flex: 1;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: #ffffff;
+            flex: 1;
+            display: none;
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.25);
+        }
+
+        .status {
+            margin-top: 14px;
+            font-size: 13px;
+            border-radius: 10px;
+            padding: 12px 14px;
+            display: none;
+        }
+
+        .status.error {
+            color: #991b1b;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+
+        .status.success {
+            color: #166534;
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            display: block;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 22px 0 18px;
+            display: none;
+        }
+
+        .card {
+            border-radius: 14px;
+            padding: 16px;
+            color: #ffffff;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
+        }
+
+        .card h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            letter-spacing: 0.6px;
+        }
+
+        .card p {
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .c1 { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
+        .c2 { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+        .c3 { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0;
+            font-size: 13px;
+            display: none;
+            background: #ffffff;
+        }
+
+        .results-table th,
+        .results-table td {
+            border: 1px solid #e2e8f0;
+            padding: 11px 10px;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        .results-table th {
+            background: #eff6ff;
+            font-size: 12px;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .results-table tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .results-wrap {
+            max-height: 500px;
+            overflow: auto;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            box-shadow: inset 0 1px 0 #ffffff;
+        }
+
+        .small {
+            font-size: 12px;
+            color: #475569;
+            margin-top: 14px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Company Bulk Resume Scanner</h1>
+            <p>Batch ATS screening for recruitment (1 to 1000 resumes per run)</p>
+            <div class="header-meta">
+                <span class="meta-pill">Bulk Mode</span>
+                <span class="meta-pill">ATS Match Ranking</span>
+                <span class="meta-pill">CSV Export</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <form id="bulkForm">
+                <div class="grid">
+                    <div class="panel">
+                        <label for="resumes">Upload Resume Files</label>
+                        <input id="resumes" name="resumes" type="file" multiple accept=".pdf,.txt,.docx" required>
+                        <div class="hint">Upload 1 to 1000 files in one run (PDF, TXT, DOCX).</div>
+                        <div class="hint" id="countHint">Selected files: 0</div>
+                    </div>
+
+                    <div class="panel">
+                        <label for="job_description">Job Description</label>
+                        <textarea id="job_description" name="job_description" placeholder="Paste the full job description here..." required></textarea>
+                        <div class="hint">All uploaded resumes are scored against this one job profile.</div>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn-primary" type="submit" id="scanBtn">Start Bulk Scan</button>
+                    <button class="btn-secondary" type="reset">Reset</button>
+                    <button class="btn-download" type="button" id="downloadBtn">Download CSV Report</button>
+                </div>
+            </form>
+
+            <div class="status" id="status"></div>
+
+            <div class="summary-cards" id="summaryCards">
+                <div class="card c1">
+                    <h3>Total Uploaded</h3>
+                    <p id="totalCount">0</p>
+                </div>
+                <div class="card c2">
+                    <h3>Processed</h3>
+                    <p id="processedCount">0</p>
+                </div>
+                <div class="card c3">
+                    <h3>Failed</h3>
+                    <p id="failedCount">0</p>
+                </div>
+            </div>
+
+            <div class="results-wrap" id="resultsWrap" style="display:none;">
+                <table class="results-table" id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>File Name</th>
+                            <th>Match Score</th>
+                            <th>Summary</th>
+                            <th>Missing Keywords</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody"></tbody>
+                </table>
+            </div>
+
+            <div class="small">Tip: This company portal is separate from the single-resume website and is intended for bulk hiring operations.</div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('bulkForm');
+        const resumesInput = document.getElementById('resumes');
+        const countHint = document.getElementById('countHint');
+        const scanBtn = document.getElementById('scanBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusBox = document.getElementById('status');
+
+        const summaryCards = document.getElementById('summaryCards');
+        const totalCount = document.getElementById('totalCount');
+        const processedCount = document.getElementById('processedCount');
+        const failedCount = document.getElementById('failedCount');
+
+        const resultsWrap = document.getElementById('resultsWrap');
+        const resultsTable = document.getElementById('resultsTable');
+        const resultsBody = document.getElementById('resultsBody');
+
+        resumesInput.addEventListener('change', () => {
+            countHint.textContent = `Selected files: ${resumesInput.files.length}`;
+        });
+
+        form.addEventListener('reset', () => {
+            countHint.textContent = 'Selected files: 0';
+            statusBox.textContent = '';
+            statusBox.className = 'status';
+            summaryCards.style.display = 'none';
+            resultsWrap.style.display = 'none';
+            resultsTable.style.display = 'none';
+            resultsBody.innerHTML = '';
+            downloadBtn.style.display = 'none';
+            scanBtn.disabled = false;
+            scanBtn.textContent = 'Start Bulk Scan';
+        });
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const files = resumesInput.files;
+            const jobDescription = document.getElementById('job_description').value.trim();
+
+            if (!jobDescription) {
+                showStatus('Please paste the job description.', true);
+                return;
+            }
+
+            if (files.length < 1 || files.length > 1000) {
+                showStatus('Please upload between 1 and 1000 resumes.', true);
+                return;
+            }
+
+            scanBtn.disabled = true;
+            scanBtn.textContent = 'Scanning...';
+            showStatus(`Bulk scan started for ${files.length} resumes. This may take time for large batches.`, false);
+
+            try {
+                const formData = new FormData();
+                for (const file of files) {
+                    formData.append('resumes', file);
+                }
+                formData.append('job_description', jobDescription);
+
+                const response = await fetch('/bulk-scan', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showStatus(data.error || 'Bulk scan failed.', true);
+                    scanBtn.disabled = false;
+                    scanBtn.textContent = 'Start Bulk Scan';
+                    return;
+                }
+
+                renderResults(data);
+                showStatus(`Bulk scan completed. Processed: ${data.processed}, Failed: ${data.failed}.`, false);
+                downloadBtn.style.display = 'inline-block';
+            } catch (error) {
+                console.error(error);
+                showStatus('Network error while running bulk scan.', true);
+            } finally {
+                scanBtn.disabled = false;
+                scanBtn.textContent = 'Start Bulk Scan';
+            }
+        });
+
+        downloadBtn.addEventListener('click', async () => {
+            downloadBtn.disabled = true;
+            downloadBtn.textContent = 'Preparing...';
+
+            try {
+                const response = await fetch('/bulk-export-csv');
+                if (!response.ok) {
+                    const data = await response.json();
+                    showStatus(data.error || 'Could not download CSV.', true);
+                    return;
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+
+                const contentDisposition = response.headers.get('content-disposition');
+                let filename = 'bulk_resume_analysis.csv';
+                if (contentDisposition) {
+                    const match = contentDisposition.match(/filename[^;=\n]*=(['"]?)([^'";\n]*)\1/);
+                    if (match && match[2]) filename = match[2];
+                }
+
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                showStatus('CSV report downloaded.', false);
+            } catch (error) {
+                console.error(error);
+                showStatus('Download failed.', true);
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = 'Download CSV Report';
+            }
+        });
+
+        function renderResults(data) {
+            summaryCards.style.display = 'grid';
+            totalCount.textContent = data.total_uploaded ?? 0;
+            processedCount.textContent = data.processed ?? 0;
+            failedCount.textContent = data.failed ?? 0;
+
+            resultsBody.innerHTML = '';
+            const rows = Array.isArray(data.results) ? data.results : [];
+
+            rows.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                const missing = (item.missing_keywords || []).join(', ');
+                tr.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td>${escapeHtml(item.file_name || '')}</td>
+                    <td><strong>${item.match_score ?? 0}</strong></td>
+                    <td>${escapeHtml(item.summary || '')}</td>
+                    <td>${escapeHtml(missing)}</td>
+                `;
+                resultsBody.appendChild(tr);
+            });
+
+            resultsWrap.style.display = 'block';
+            resultsTable.style.display = 'table';
+        }
+
+        function showStatus(message, isError) {
+            statusBox.textContent = message;
+            statusBox.className = isError ? 'status error' : 'status success';
+        }
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>

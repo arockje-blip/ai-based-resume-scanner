@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employer Prototype - Bulk Resume Screening</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: #e2e8f0;
+            background:
+                radial-gradient(circle at 12% 12%, rgba(34, 211, 238, 0.22), transparent 35%),
+                radial-gradient(circle at 88% 15%, rgba(59, 130, 246, 0.20), transparent 35%),
+                linear-gradient(135deg, #0b1020, #111827 60%, #0f172a);
+            padding: 24px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+            backdrop-filter: blur(8px);
+        }
+        .header {
+            padding: 24px;
+            background: linear-gradient(120deg, #059669, #0ea5e9);
+        }
+        .header h1 { font-size: 30px; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.95; }
+        .content { padding: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .panel {
+            border: 1px solid rgba(148, 163, 184, 0.24);
+            border-radius: 12px;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.7);
+        }
+        .panel h3 { font-size: 14px; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 10px; color: #67e8f9; }
+        textarea, input {
+            width: 100%;
+            border: 1px solid #334155;
+            background: #0b1220;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 11px;
+            font-size: 13px;
+        }
+        textarea { min-height: 140px; resize: vertical; }
+        .row { margin-top: 10px; }
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-weight: 700;
+            cursor: pointer;
+            background: linear-gradient(135deg, #10b981, #0ea5e9);
+            color: white;
+            width: 100%;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .stat {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+        .stat p:first-child { font-size: 11px; color: #93c5fd; text-transform: uppercase; }
+        .stat p:last-child { font-size: 24px; font-weight: 700; margin-top: 4px; }
+        .table-wrap {
+            margin-top: 14px;
+            border: 1px solid rgba(148, 163, 184, 0.22);
+            border-radius: 12px;
+            overflow: auto;
+            max-height: 360px;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding: 10px; text-align: left; }
+        th { background: rgba(30, 41, 59, 0.9); position: sticky; top: 0; }
+        .badge { font-size: 11px; padding: 4px 8px; border-radius: 999px; background: rgba(16,185,129,.2); color: #86efac; }
+        .note { padding: 0 22px 22px; color: #94a3b8; font-size: 12px; }
+        a.back { color: #7dd3fc; text-decoration: none; }
+        @media (max-width: 900px) { .content { grid-template-columns: 1fr; } .summary { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Employer Portal (Prototype)</h1>
+            <p>Bulk-screen workflow demo for 1 to 1000 resumes. This is a frontend prototype (no model server required).</p>
+        </div>
+        <div class="content">
+            <div class="panel">
+                <h3>Batch Input</h3>
+                <label>Number of resumes (demo)</label>
+                <div class="row"><input id="count" type="number" min="1" max="1000" value="120"></div>
+                <div class="row"><label>Job Description</label><textarea id="jd" placeholder="Paste job description..."></textarea></div>
+                <div class="row"><button id="runBtn">Run Prototype Screening</button></div>
+            </div>
+            <div class="panel">
+                <h3>Result Summary</h3>
+                <div class="summary">
+                    <div class="stat"><p>Total</p><p id="total">0</p></div>
+                    <div class="stat"><p>Processed</p><p id="processed">0</p></div>
+                    <div class="stat"><p>Avg Score</p><p id="avg">0</p></div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Rank</th><th>Candidate</th><th>Score</th><th>Status</th></tr></thead>
+                        <tbody id="rows"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="note">Prototype mode only. <a class="back" href="portal_index.html" onclick="history.back(); return false;">← Back to role selection</a></div>
+    </div>
+
+    <script>
+        const runBtn = document.getElementById('runBtn');
+        const countInput = document.getElementById('count');
+        const rows = document.getElementById('rows');
+
+        runBtn.addEventListener('click', () => {
+            const total = Math.max(1, Math.min(1000, Number(countInput.value) || 1));
+            const data = [];
+            let scoreSum = 0;
+
+            for (let i = 1; i <= total; i++) {
+                const score = Math.floor(50 + Math.random() * 50);
+                scoreSum += score;
+                data.push({ name: `Candidate_${String(i).padStart(4, '0')}.pdf`, score });
+            }
+
+            data.sort((a, b) => b.score - a.score);
+            const top = data.slice(0, Math.min(40, data.length));
+
+            rows.innerHTML = '';
+            top.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${idx + 1}</td><td>${item.name}</td><td><strong>${item.score}</strong></td><td><span class="badge">Processed</span></td>`;
+                rows.appendChild(tr);
+            });
+
+            document.getElementById('total').textContent = total;
+            document.getElementById('processed').textContent = total;
+            document.getElementById('avg').textContent = Math.round(scoreSum / total);
+        });
+    </script>
+</body>
+</html>

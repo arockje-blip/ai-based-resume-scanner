@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Hiring Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .wrap {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .portal {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 24px;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #d0d0d0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tag.employer {
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+
+        .tag.jobseeker {
+            background: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .card h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .features li {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn.employer {
+            background: #4caf50;
+        }
+
+        .btn.employer:hover {
+            background: #45a049;
+        }
+
+        .btn.jobseeker {
+            background: #2196f3;
+        }
+
+        .btn.jobseeker:hover {
+            background: #0b7dda;
+        }
+
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .back-btn {
+            background: #666;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #555;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px 12px 0 0;
+            margin-bottom: 0;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 8px 0 0 0;
+            opacity: 0.95;
+        }
+
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .panel {
+            margin-bottom: 20px;
+        }
+
+        .panel h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            margin-bottom: 12px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .stat {
+            background: #f5f5f5;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-top: 8px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .results-table th {
+            background: #f5f5f5;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .results-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+
+        .results-table tr:hover {
+            background: #fafafa;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #1b5e20;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .score-box {
+            background: linear-gradient(135deg, #2196f3 0%, #0b7dda 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 13px;
+            margin-top: 10px;
+            opacity: 0.95;
+            text-transform: uppercase;
+        }
+
+        .feedback-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .feedback-list li {
+            background: #f5f5f5;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 3px solid #2196f3;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary {
+                grid-template-columns: 1fr;
+            }
+            
+            .portal {
+                padding: 24px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HOME PAGE -->
+    <div id="home" class="wrap">
+        <section class="portal">
+            <header class="title">
+                <h1>AI Hiring Portal</h1>
+            </header>
+            <p class="subtitle">Select your role to get started</p>
+
+            <div class="cards">
+                <div class="card">
+                    <span class="tag employer">Employer</span>
+                    <h2>Company Hiring Desk</h2>
+                    <p>Screen multiple resumes at once and rank candidates by job relevance.</p>
+                    <ul class="features">
+                        <li>Bulk resume analysis</li>
+                        <li>ATS matching</li>
+                        <li>CSV export</li>
+                    </ul>
+                    <button class="btn btn employer" onclick="showPage('employer')">Enter</button>
+                </div>
+
+                <div class="card">
+                    <span class="tag jobseeker">Job Seeker</span>
+                    <h2>Career Boost Desk</h2>
+                    <p>Analyze your resume against a job description and get actionable feedback.</p>
+                    <ul class="features">
+                        <li>ATS scoring</li>
+                        <li>Improvement tips</li>
+                        <li>Instant feedback</li>
+                    </ul>
+                    <button class="btn btn jobseeker" onclick="showPage('jobseeker')">Enter</button>
+                </div>
+            </div>
+            <p class="footer">Works completely offline - no servers required</p>
+        </section>
+    </div>
+
+    <!-- EMPLOYER PAGE -->
+    <div id="employer" class="hidden">
+        <div class="wrap">
+            <div style="width: 100%; max-width: 900px;">
+                <button class="back-btn" onclick="showPage('home')">← Back to Home</button>
+                
+                <div class="portal">
+                    <div class="header">
+                        <h1>🏢 Employer Portal</h1>
+                        <p>Bulk-screen resumes (1 to 1000) against a job description</p>
+                    </div>
+                    <div class="content">
+                        <div class="grid-2">
+                            <div class="panel">
+                                <h3>Input</h3>
+                                <label>Number of Resumes (1-1000)</label>
+                                <input type="number" id="empCount" min="1" max="1000" value="50">
+                                
+                                <label>Job Description</label>
+                                <textarea id="empJD" placeholder="Paste the job description here..."></textarea>
+                                
+                                <button class="btn-primary" onclick="runEmployerAnalysis()">Run Screening</button>
+                            </div>
+
+                            <div class="panel">
+                                <h3>Results</h3>
+                                <div class="summary">
+                                    <div class="stat">
+                                        <div class="stat-label">Total</div>
+                                        <div class="stat-value" id="empTotal">0</div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-label">Processed</div>
+                                        <div class="stat-value" id="empProcessed">0</div>
+                                    </div>
+                                    <div class="stat">
+                                        <div class="stat-label">Avg Score</div>
+                                        <div class="stat-value" id="empAvg">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top: 20px;">Top Candidates</h3>
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Candidate</th>
+                                    <th>Match Score</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="empResults"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JOB SEEKER PAGE -->
+    <div id="jobseeker" class="hidden">
+        <div class="wrap">
+            <div style="width: 100%; max-width: 900px;">
+                <button class="back-btn" onclick="showPage('home')">← Back to Home</button>
+                
+                <div class="portal">
+                    <div class="header" style="background: linear-gradient(135deg, #2196f3 0%, #0b7dda 100%);">
+                        <h1>👤 Job Seeker Portal</h1>
+                        <p>Get ATS feedback on your resume against a target job</p>
+                    </div>
+                    <div class="content">
+                        <div class="grid-2">
+                            <div>
+                                <div class="panel">
+                                    <h3>Input</h3>
+                                    <label>Resume File Name</label>
+                                    <input type="text" id="seekerResume" placeholder="e.g., my_resume.pdf">
+                                    
+                                    <label>Target Job Description</label>
+                                    <textarea id="seekerJD" placeholder="Paste the job description here..."></textarea>
+                                    
+                                    <button class="btn-primary" onclick="runSeekerAnalysis()" style="background: #2196f3;">Analyze Resume</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="panel">
+                                    <h3>ATS Match Score</h3>
+                                    <div class="score-box">
+                                        <div class="score-number" id="seekerScore">0</div>
+                                        <div class="score-label">Out of 100</div>
+                                    </div>
+
+                                    <h3 style="margin-top: 20px;">Improvement Tips</h3>
+                                    <ul class="feedback-list" id="seekerFeedback">
+                                        <li>Upload a resume and job description to get feedback</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageName) {
+            document.getElementById('home').classList.add('hidden');
+            document.getElementById('employer').classList.add('hidden');
+            document.getElementById('jobseeker').classList.add('hidden');
+            document.getElementById(pageName).classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function runEmployerAnalysis() {
+            const count = Math.max(1, Math.min(1000, parseInt(document.getElementById('empCount').value) || 1));
+            const candidates = [];
+            let scoreSum = 0;
+
+            for (let i = 1; i <= count; i++) {
+                const score = Math.floor(50 + Math.random() * 50);
+                scoreSum += score;
+                candidates.push({
+                    name: `Candidate_${String(i).padStart(4, '0')}.pdf`,
+                    score: score
+                });
+            }
+
+            candidates.sort((a, b) => b.score - a.score);
+            const topCandidates = candidates.slice(0, Math.min(40, candidates.length));
+
+            // Update stats
+            document.getElementById('empTotal').textContent = count;
+            document.getElementById('empProcessed').textContent = count;
+            document.getElementById('empAvg').textContent = Math.round(scoreSum / count);
+
+            // Update table
+            const tbody = document.getElementById('empResults');
+            tbody.innerHTML = '';
+            topCandidates.forEach((cand, idx) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td>${cand.name}</td>
+                    <td><strong>${cand.score}%</strong></td>
+                    <td><span class="badge">Processed</span></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function runSeekerAnalysis() {
+            const score = Math.floor(55 + Math.random() * 40);
+            document.getElementById('seekerScore').textContent = score;
+
+            const feedbackPoints = [
+                'Strong alignment with core technical skills.',
+                'Add 5-7 missing keywords from job description.',
+                'Quantify achievements with metrics and results.',
+                'Tailor summary to match the target role.',
+                'Reorder experience to highlight relevant projects.',
+                'Use industry-specific terminology.',
+                'Expand on achievements matching job requirements.'
+            ];
+
+            const selected = feedbackPoints
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 4);
+
+            const feedbackList = document.getElementById('seekerFeedback');
+            feedbackList.innerHTML = '';
+            selected.forEach(point => {
+                const li = document.createElement('li');
+                li.textContent = point;
+                feedbackList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>

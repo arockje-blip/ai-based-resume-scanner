@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Seeker Prototype - Resume ATS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background:
+                radial-gradient(circle at 8% 18%, rgba(125, 211, 252, 0.2), transparent 35%),
+                radial-gradient(circle at 88% 12%, rgba(167, 139, 250, 0.2), transparent 35%),
+                linear-gradient(130deg, #0b1120, #111827);
+            color: #e2e8f0;
+            padding: 24px;
+        }
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.75);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+        .header {
+            padding: 24px;
+            background: linear-gradient(130deg, #3b82f6, #4f46e5);
+        }
+        .header h1 { font-size: 30px; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: .95; }
+        .content { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .panel {
+            border: 1px solid rgba(148, 163, 184, .22);
+            background: rgba(15, 23, 42, .8);
+            border-radius: 12px;
+            padding: 14px;
+        }
+        .panel h3 { font-size: 13px; letter-spacing: .7px; text-transform: uppercase; margin-bottom: 10px; color: #93c5fd; }
+        textarea, input {
+            width: 100%; border: 1px solid #334155; background: #0b1220; color: #e2e8f0;
+            border-radius: 10px; padding: 11px; font-size: 13px;
+        }
+        textarea { min-height: 150px; resize: vertical; }
+        .row { margin-top: 10px; }
+        button {
+            width: 100%; border: none; border-radius: 10px; padding: 12px;
+            background: linear-gradient(135deg, #3b82f6, #4f46e5); color: white; font-weight: 700; cursor: pointer;
+        }
+        .score {
+            margin-top: 10px;
+            background: linear-gradient(135deg, #1d4ed8, #4338ca);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .score .num { font-size: 44px; font-weight: 800; line-height: 1; }
+        .score .lbl { font-size: 12px; opacity: .9; margin-top: 6px; text-transform: uppercase; }
+        ul { margin-top: 10px; padding-left: 18px; color: #cbd5e1; }
+        li { margin-bottom: 6px; }
+        .note { padding: 0 20px 20px; font-size: 12px; color: #94a3b8; }
+        a.back { color: #93c5fd; text-decoration: none; }
+        @media (max-width: 850px) { .content { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👤 Job Seeker Portal (Prototype)</h1>
+            <p>Personal ATS feedback demo for one resume. Prototype mode runs locally in browser without model calls.</p>
+        </div>
+        <div class="content">
+            <div class="panel">
+                <h3>Input</h3>
+                <label>Resume file name (demo)</label>
+                <div class="row"><input id="resume" placeholder="resume.pdf"></div>
+                <div class="row"><label>Job Description</label><textarea id="jd" placeholder="Paste target job description..."></textarea></div>
+                <div class="row"><button id="analyzeBtn">Run Prototype Analysis</button></div>
+            </div>
+            <div class="panel">
+                <h3>Output</h3>
+                <div class="score">
+                    <div class="num" id="score">0</div>
+                    <div class="lbl">Match Score / 100</div>
+                </div>
+                <ul id="bullets">
+                    <li>Upload a resume name and job description to generate demo insights.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="note">Prototype mode only. <a class="back" href="portal_index.html" onclick="history.back(); return false;">← Back to role selection</a></div>
+    </div>
+
+    <script>
+        document.getElementById('analyzeBtn').addEventListener('click', () => {
+            const score = Math.floor(55 + Math.random() * 40);
+            document.getElementById('score').textContent = score;
+
+            const points = [
+                'Strong role alignment in core skills section.',
+                'Add 4-6 missing keywords from job description.',
+                'Quantify impact with more metrics in experience bullets.',
+                'Tailor summary statement to target title and domain.',
+                'Reorder key projects to match employer priorities.'
+            ];
+
+            const picked = points.sort(() => 0.5 - Math.random()).slice(0, 4);
+            const ul = document.getElementById('bullets');
+            ul.innerHTML = '';
+            picked.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                ul.appendChild(li);
+            });
+        });
+    </script>
+</body>
+</html>

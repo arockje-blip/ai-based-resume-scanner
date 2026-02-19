@@ -1,0 +1,36 @@
+from pathlib import Path
+from flask import Flask
+
+BASE_DIR = Path(__file__).resolve().parent
+app = Flask(__name__)
+
+
+@app.route("/", methods=["GET"])
+def home():
+    html_path = BASE_DIR / "portal_index.html"
+    if html_path.exists():
+        with open(html_path, "r", encoding="utf-8") as file:
+            return file.read()
+    return "<h1>Role Portal</h1><p>portal_index.html not found.</p>", 404
+
+
+@app.route("/go/employer", methods=["GET"])
+def go_employer():
+    html_path = BASE_DIR / "employer_prototype.html"
+    if html_path.exists():
+        with open(html_path, "r", encoding="utf-8") as file:
+            return file.read()
+    return "<h1>Employer Prototype</h1><p>employer_prototype.html not found.</p>", 404
+
+
+@app.route("/go/job-seeker", methods=["GET"])
+def go_job_seeker():
+    html_path = BASE_DIR / "job_seeker_prototype.html"
+    if html_path.exists():
+        with open(html_path, "r", encoding="utf-8") as file:
+            return file.read()
+    return "<h1>Job Seeker Prototype</h1><p>job_seeker_prototype.html not found.</p>", 404
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5050, debug=True)
